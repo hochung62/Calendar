@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>심리 검사</title>
+<style>
+  body { font-family: sans-serif; text-align: center; background: #f0f8ff; padding: 20px; margin: 0; }
+  h1 { color: #333; font-size: 2em; margin-bottom: 20px; }
+  .question { margin: 20px 0; font-size: 1.2em; }
+  .option { 
+    display: block; 
+    margin: 10px auto; 
+    padding: 12px 20px; 
+    font-size: 1.1em; 
+    cursor: pointer; 
+    border-radius: 8px; 
+    border: 1px solid #333; 
+    background: #cce7ff; 
+    width: 250px; 
+    max-width: 80%; /* 화면에 맞게 최대 너비 조정 */
+    box-sizing: border-box;
+  }
+  #result { margin-top: 30px; font-size: 1.2em; color: #333; }
+  a { color: #0077cc; text-decoration: none; }
+  
+  /* 모바일 최적화 */
+  @media (max-width: 480px) {
+    h1 { font-size: 1.5em; }
+    .question { font-size: 1em; }
+    .option { font-size: 1em; padding: 10px; }
+    #result { font-size: 1em; }
+  }
+</style>
+</head>
+<body>
+
+<h1>간단 심리 검사</h1>
+<div id="quiz"></div>
+<div id="result"></div>
+
+<script>
+const questions = [
+  { q: "Q1: 요즘 기분은 어떤가요?", options: [
+      { text: "우울하고 무기력하다", score: -1 },
+      { text: "보통이다", score: 0 },
+      { text: "기분이 괜찮다", score: 1 }
+    ]},
+  { q: "Q2: 스트레스를 받을 때 주로 어떻게 하나요?", options: [
+      { text: "혼자 삭힌다", score: -1 },
+      { text: "가끔 친구와 이야기한다", score: 0 },
+      { text: "이야기하고 풀려고 한다", score: 1 }
+    ]},
+  { q: "Q3: 혼자 있는 시간이 많나요?", options: [
+      { text: "자주 혼자 있다", score: -1 },
+      { text: "가끔 친구와 만난다", score: 0 },
+      { text: "거의 함께 시간을 보낸다", score: 1 }
+    ]},
+  { q: "Q4: 도움을 요청하는 것이 편한가요?", options: [
+      { text: "불편하다", score: -1 },
+      { text: "가끔 한다", score: 0 },
+      { text: "편하다", score: 1 }
+    ]},
+  { q: "Q5: 미래에 대한 기대감이 있나요?", options: [
+      { text: "기대가 없다", score: -1 },
+      { text: "보통이다", score: 0 },
+      { text: "기대가 크다", score: 1 }
+    ]},
+  { q: "Q6: 잠은 충분히 자고 있나요?", options: [
+      { text: "거의 못 잔다", score: -1 },
+      { text: "가끔 부족하다", score: 0 },
+      { text: "충분히 잔다", score: 1 }
+    ]},
+  { q: "Q7: 식사는 규칙적으로 하고 있나요?", options: [
+      { text: "거의 불규칙적이다", score: -1 },
+      { text: "가끔 불규칙적이다", score: 0 },
+      { text: "규칙적으로 한다", score: 1 }
+    ]},
+  { q: "Q8: 최근에 즐거운 활동을 했나요?", options: [
+      { text: "전혀 없다", score: -1 },
+      { text: "가끔 있었다", score: 0 },
+      { text: "자주 있었다", score: 1 }
+    ]},
+  { q: "Q9: 자신을 긍정적으로 평가하나요?", options: [
+      { text: "거의 부정적이다", score: -1 },
+      { text: "보통이다", score: 0 },
+      { text: "긍정적이다", score: 1 }
+    ]},
+  { q: "Q10: 어려움이 있을 때 스스로 해결할 수 있다고 느끼나요?", options: [
+      { text: "거의 불가능하다", score: -1 },
+      { text: "가끔 가능하다", score: 0 },
+      { text: "대부분 가능하다", score: 1 }
+    ]}
+];
+
+let currentQ = 0;
+let totalScore = 0;
+
+const quizDiv = document.getElementById("quiz");
+const resultDiv = document.getElementById("result");
+
+function showQuestion() {
+  quizDiv.innerHTML = "";
+  if(currentQ >= questions.length) {
+    showResult();
+    return;
+  }
+
+  const qObj = questions[currentQ];
+  const qEl = document.createElement("div");
+  qEl.className = "question";
+  qEl.textContent = qObj.q;
+  quizDiv.appendChild(qEl);
+
+  qObj.options.forEach((opt, index) => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.textContent = opt.text;
+    btn.onclick = () => {
+      totalScore += opt.score;
+      currentQ++;
+      showQuestion();
+    };
+    quizDiv.appendChild(btn);
+  });
+}
+
+function showResult() {
+  quizDiv.innerHTML = "";
+  resultDiv.innerHTML = `총점: ${totalScore}<br><br>`;
+
+  if(totalScore >= 8){
+    resultDiv.innerHTML += "마음이 안정적이에요 😊 계속 긍정적인 마음을 유지하세요!";
+  } else if(totalScore >= 3){
+    resultDiv.innerHTML += "조금 힘들 수 있어요. 친구, 가족과 이야기해보세요.";
+  } else {
+    resultDiv.innerHTML += "힘든 마음이 크네요. 상담이나 도움을 권장해요.<br>";
+    resultDiv.innerHTML += "✅ 온라인 심리 상담: <a href='https://www.1388.go.kr/cco/YTOSP_SC_CCI_01' target='_blank'>https://www.1388.go.kr/cco/YTOSP_SC_CCI_01</a><br>";
+    resultDiv.innerHTML += "✅ 마음챙김/명상 앱 활용<br>";
+    resultDiv.innerHTML += "✅ 신뢰할 수 있는 친구나 가족과 대화<br>";
+    resultDiv.innerHTML += "✅ 간단한 호흡, 명상, 감정 일기 쓰기";
+  }
+}
+
+showQuestion();
+</script>
+
+</body>
+</html>
